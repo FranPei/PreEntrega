@@ -51,22 +51,24 @@ class CarritoManager {
             }
     }*/
     
-    addProductToCarrito(id_carrito){
+    addProductToCarrito(id_carrito, id_product, data){
 
         let carritoAct = [];
-        let productsNew = [];
+        //let productsNew = [];
+        const {quantity} = data;
 
         if(fs.existsSync(this.#path)){
             const lecturaCarritos = fs.readFileSync(this.#path,'utf-8')
             this.#products = JSON.parse(lecturaCarritos);
-            
-            const existe = this.#products.findIndex( carrito => carrito.id === id_carrito);
-            productsNew = {
-                id: this.#products.length + 1,
-                quantity: 100
-            }
+            //carritoAct = [...this.#products];
+            const existe = this.#products.find( carrito => carrito.id === id_carrito);
             if(existe !== -1) {
-                this.#products[existe] = [...this.#products[existe], productsNew]
+                const existeP = this.#products.products.find((product) => product.id === id_product);
+                if(existeP){
+                    existeP.quantity += quantity || 1;
+                } else {
+                    this.#products.products.push({ id: id_product, quantity: quantity || 1});
+                }
                 fs.writeFileSync(this.#path, JSON.stringify(this.#products, null, 2), 'utf-8');
             } else {
                 console.log("No se encuentra ese ID de Carrito");
