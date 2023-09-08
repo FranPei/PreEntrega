@@ -75,10 +75,10 @@ app.get('/api/carts/:cid',(req, res)=>{
     res.send({carrito});
 })
 
-app.post('//api/carts/:cid/product/:pid', (req, res) => {
+app.post('/api/carts/:cid', (req, res) => {
     let idCarrito = req.params.cid;
-    let idProduct = req.params.pid;
-    managerCarrito.addProductToCarrito(parseInt(idCarrito),parseInt(idProduct));
+    //let idProduct = req.params.pid;
+    managerCarrito.addProductToCarrito(parseInt(idCarrito));
     res.send({status:"succes", message: "Producto Agregado"});
 
 
