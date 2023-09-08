@@ -22,19 +22,69 @@ class CarritoManager {
             console.log("Archivo Creado");
         }*/
     }
-    
-/*
-    getProducts() {
+    /*
+    addProductToCarrito(id_carrito, id_product){
+
+        let carritoAct = [];
+
         if(fs.existsSync(this.#path)){
-            const lecturaProductos = fs.readFileSync(this.#path,'utf-8')
-            this.#products = JSON.parse(lecturaProductos);
-            return this.#products;
-        } else {
-            console.log("No se pudo leer archivo. Verificar que el archivo exista");
-        }
-        
+            const lecturaCarritos = fs.readFileSync(this.#path,'utf-8')
+            this.#products = JSON.parse(lecturaCarritos);
+            //return this.#products;
+            const actCarrito = [...this.#products];
+            const existe = actCarrito.findIndex( carrito => carrito.id === id_carrito); 
+            if(existe !==-1) {
+                const existeproducto = actCarrito[existe].findIndex(producto => producto.id === id_product);
+                if(!existeproducto){
+                    
+                } else {
+                    actCarrito[existe][existeproducto].quantity = actCarrito[existe][existeproducto].quantity + data.cuantity;
+                }
+                //actCarrito[existe][existeproducto] = {...actproductos[existe], ...act}
+                this.#products = actproductos;
+                fs.writeFileSync(this.#path, JSON.stringify(this.#products, null, 2), 'utf-8');
+                console.log(`El producto con id: ${id} se actualizó correctamente`);
+                return true;
+                };
+            } else {
+                console.log("No se encuentra ese ID de Carrito");
+            }
     }*/
-/*
+    
+    addProductToCarrito(id_carrito, id_product){
+
+        let carritoAct = [];
+        let productsNew = {};
+
+        if(fs.existsSync(this.#path)){
+            const lecturaCarritos = fs.readFileSync(this.#path,'utf-8')
+            this.#products = JSON.parse(lecturaCarritos);
+            carritoAct = [...this.#products];
+            const existe = carritoAct.findIndex( carrito => carrito.id === id_carrito);
+            productsNew = {
+                id: this.#products.length + 1,
+                quantity: 100
+            }
+            if(existe !== -1) {
+                carritoAct[existe].push(productsNew);
+                this.products.push(carritoAct);
+                fs.writeFileSync(this.#path, JSON.stringify(this.#products, null, 2), 'utf-8');
+            } else {
+                console.log("No se encuentra ese ID de Carrito");
+            }
+
+        } else {
+            console.log("No se puede abrir el archivo");
+        }
+    }
+   
+
+
+
+
+    
+    
+    /*
     addProducts(productnew){ //title, description, price, thumbnail, code, stock, status, category
         this.#products = [];
 
@@ -63,9 +113,10 @@ class CarritoManager {
                 return;
             }
         }
-    }
+    }*/
 
-*/
+
+
     addCarrito(carritoNuevo){
 
         this.products = [];
@@ -77,37 +128,38 @@ class CarritoManager {
 
             fs.writeFileSync(this.#path, '[]', 'utf-8');
             console.log("El archivo no existia pero ya fue creado");
+            const lecturaProductos = fs.readFileSync(this.#path,'utf-8')
+            this.#products = JSON.parse(lecturaProductos);
         } else {
             const lecturaProductos = fs.readFileSync(this.#path,'utf-8')
             this.#products = JSON.parse(lecturaProductos);
-            nuevoCarrito ={
-                id: this.#products.length +1,
-                products: []
-            }
-            this.#products.push(nuevoCarrito);
-            fs.writeFileSync(this.#path, JSON.stringify(this.#products, null, 2), 'utf-8');
-            return nuevoCarrito;
         }
-        
+        nuevoCarrito ={
+            id: this.#products.length +1,
+            products: []
+        }
+        this.#products.push(nuevoCarrito);
+        fs.writeFileSync(this.#path, JSON.stringify(this.#products, null, 2), 'utf-8');
+        return nuevoCarrito;
     }
 
-/*
-    getProductByID(idBuscado) {//let id_e;
+
+    getCarritoByID(idBuscado) {//let id_e;
         let number_id, id_e;
-        let objeto_e = [];
+        let carrito_e = [];
         if(fs.existsSync(this.#path)){
             const lecturaProductos = fs.readFileSync(this.#path,'utf-8')
             this.#products = JSON.parse(lecturaProductos);
             //return this.#products;
-            objeto_e = [...this.#products];
-            const encontrado = objeto_e.findIndex( productos => productos.id === idBuscado);
+            carrito_e = [...this.#products];
+            const encontrado = carrito_e.findIndex( carrito => carrito.id === idBuscado);
 
             if(encontrado !== -1){
                 id_e = true;
             }
             if(id_e) {
-                console.log(objeto_e[encontrado])
-                return objeto_e[encontrado];
+                console.log(carrito_e[encontrado])
+                return carrito_e[encontrado];
             } else {
                 console.log("Not Found");
             }
@@ -115,49 +167,8 @@ class CarritoManager {
             console.log("No se pudo leer archivo. Verificar que el archivo exista");
         }
     }
+    
 
-    updateProduct(id, act){
-
-        if(fs.existsSync(this.#path)){
-            const lecturaProductos = fs.readFileSync(this.#path,'utf-8')
-            this.#products = JSON.parse(lecturaProductos);
-            //return this.#products;
-            const actproductos = [...this.#products];
-            const existe = actproductos.findIndex( productos => productos.id === id); 
-            if(existe !==-1) {
-                actproductos[existe] = {...actproductos[existe], ...act}
-                this.#products = actproductos;
-                fs.writeFileSync(this.#path, JSON.stringify(this.#products, null, 2), 'utf-8');
-                console.log(`El producto con id: ${id} se actualizó correctamente`);
-                return true;
-                };
-                
-
-            } else {
-                console.log("No se encuentra ese ID");
-            }
-    }
-
-    deleteProduct(id) {
-
-        if(fs.existsSync(this.#path)){
-            const lecturaProductos = fs.readFileSync(this.#path,'utf-8')
-            this.#products = JSON.parse(lecturaProductos);
-            //return this.#products;
-            const existe = this.#products.findIndex( productos => productos.id === id); 
-
-            if(existe) {
-                const filtrado = this.#products.filter(productos => productos.id !== id)
-                console.log(filtrado)
-                console.log(`El producto con id: ${id} se eliminó correctamente`);
-                fs.writeFileSync(this.#path, JSON.stringify(filtrado, null, 2), 'utf-8');
-                return true;
-            }
-        
-        } else {
-        console.log("No se encuentra ese ID");
-        }
-    }*/
 
 }
 

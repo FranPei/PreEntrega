@@ -1,5 +1,6 @@
 import ProductManager from './EntregablePE.js'; //importa el default export 
 //import {ProductManage} from './Entregable2.js'; //importa especificamente el default export Produc Manager
+import CarritoManager from './Carrito.js';
 
 import express from "express";
 const app = express();
@@ -7,10 +8,11 @@ const server = app.listen(8080, () => console.log("Escuchando el puerto 8080"));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 const manager = new ProductManager();
-//manager.getProducts();
+const managerCarrito = new CarritoManager();
+
 
 let products = [];
-//let usproductsers = [];
+
 
 
 
@@ -33,37 +35,12 @@ app.post('/api/products', (req, res) => {
     if(!product.title || !product.description ||!product.price ||!product.code ||!product.stock ||!product.status ||!product.category) {
         return res.status(400).send({status:"error", error:"Valores Incompletos"})
     }
-    //products.push(product);
-    //console.log(products);
     manager.addProducts(product);
     res.send({status:"succes", message: "Producto Agregado"});
 
 });
 
 
-/*
-app.put('/api/user/:id', (req, res) => {
-    const userId = parseInt(req.params.id);
-    const updatedUser = req.body;
-
-    if (!updatedUser.first_name || !updatedUser.last_name) {
-        return res.status(400).send({ status: "error", error: "Valores incompletos" });
-    }
-
-    const userIndex = users.findIndex(user => user.id === userId);
-
-    if (userIndex !== -1) {
-
-        users[userIndex] = {
-            ...users[userIndex],
-            ...updatedUser
-        };
-        res.send({ status: "success", message: "Usuario actualizado" });
-    } else {
-        res.status(404).send({ status: "error", error: "Usuario no encontrado" });
-    }
-});
-*/
 
 app.put('/api/products/:id', (req, res) => {
     const userId = parseInt(req.params.id);
@@ -83,3 +60,26 @@ app.delete('/api/products/:id', (req, res) => {
     
 });
 
+////////////////////////CARRITO/////////////////////////////////////
+
+app.post('/api/carts', (req, res) => {
+    managerCarrito.addCarrito();
+    res.send({status:"succes", message: "Carrito Agregado"});
+
+});
+
+app.get('/api/carts/:cid',(req, res)=>{
+    let idCarrito = req.params.cid;
+    let carrito = managerCarrito.getCarritoByID(parseInt(idCarrito));
+    if(!carrito) return res.send({error: "Carrito no encontrado"});
+    res.send({carrito});
+})
+
+app.post('//api/carts/:cid/product/:pid', (req, res) => {
+    let idCarrito = req.params.cid;
+    let idProduct = req.params.pid;
+    managerCarrito.addProductToCarrito(parseInt(idCarrito),parseInt(idProduct));
+    res.send({status:"succes", message: "Producto Agregado"});
+
+
+});
